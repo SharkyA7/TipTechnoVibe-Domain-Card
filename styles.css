@@ -1,0 +1,553 @@
+:root {
+  --bg-deep:      #0a001f;
+  --bg-mid:       #130030;
+  --bg-purple:    #2a004a;
+  --cyan:         #00ffff;
+  --cyan-dim:     #00cccc;
+  --pink:         #ff00aa;
+  --pink-dim:     #cc0088;
+  --white:        #f0f4ff;
+  --muted:        #8899bb;
+  --card-bg:      rgba(255, 255, 255, 0.04);
+  --card-border:  rgba(0, 255, 255, 0.18);
+  --glow-cyan:    0 0 12px rgba(0,255,255,.5), 0 0 40px rgba(0,255,255,.2);
+  --glow-pink:    0 0 12px rgba(255,0,170,.5), 0 0 40px rgba(255,0,170,.2);
+  --font-display: 'Orbitron', monospace;
+  --font-body:    'Syne', sans-serif;
+  --radius-card:  20px;
+  --radius-btn:   100px;
+  --transition:   .28s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  /* Subtle gradient sweep background */
+  background: linear-gradient(
+    145deg,
+    #0a001f 0%,
+    #130028 35%,
+    #1e0040 65%,
+    #2a004a 100%
+  );
+}
+
+/* ── Particle Canvas ── */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Ambient Glow Orbs (CSS) ── */
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: orb-float 12s ease-in-out infinite alternate;
+}
+
+.orb--cyan {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0,255,255,.12) 0%, transparent 70%);
+  top: -15%;
+  left: -10%;
+  animation-duration: 14s;
+}
+
+.orb--pink {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(255,0,170,.10) 0%, transparent 70%);
+  bottom: -10%;
+  right: -8%;
+  animation-duration: 18s;
+  animation-delay: -6s;
+}
+
+.orb--mid {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(120,0,255,.08) 0%, transparent 70%);
+  top: 40%;
+  left: 60%;
+  animation-duration: 22s;
+  animation-delay: -3s;
+}
+
+@keyframes orb-float {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(30px, -40px) scale(1.08); }
+}
+
+/* ── Scanline Texture ── */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, .05) 2px,
+    rgba(0, 0, 0, .05) 4px
+  );
+}
+
+/* ── Page Layout ── */
+.page-center {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+}
+
+/* ── Glass Card ── */
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-card);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  padding: 3rem 2rem 2.5rem;
+  max-width: 700px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  /* Entry animation */
+  animation: card-enter .8s cubic-bezier(.2, 1, .4, 1) both;
+}
+
+/* Top shimmer line on card */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 8%; right: 8%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--cyan),
+    var(--pink),
+    transparent
+  );
+  opacity: .6;
+}
+
+/* Subtle inner glow */
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+  background: radial-gradient(
+    ellipse 70% 50% at 50% 0%,
+    rgba(0,255,255,.04) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Status Badge ── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: rgba(0,255,255,.06);
+  border: 1px solid rgba(0,255,255,.2);
+  border-radius: 100px;
+  padding: .3rem .9rem;
+  font-family: var(--font-display);
+  font-size: .6rem;
+  letter-spacing: .2em;
+  color: var(--cyan);
+  margin-bottom: 2rem;
+  animation: card-enter .8s .15s cubic-bezier(.2,1,.4,1) both;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: blink 1.8s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--cyan); }
+  50%       { opacity: .25; box-shadow: none; }
+}
+
+/* ── Brand Name (Hero) ── */
+.brand-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 8vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  margin-bottom: .75rem;
+  /* Stagger reveal */
+  animation: card-enter .8s .25s cubic-bezier(.2,1,.4,1) both;
+}
+
+/* Three-color brand treatment */
+.brand-tip {
+  color: var(--cyan);
+  text-shadow:
+    0 0 8px  rgba(0,255,255,.9),
+    0 0 24px rgba(0,255,255,.6),
+    0 0 60px rgba(0,255,255,.3);
+  animation: glow-pulse-cyan 3s ease-in-out infinite alternate;
+}
+
+.brand-techno {
+  color: #ffffff;
+  text-shadow:
+    0 0 6px  rgba(255,255,255,.5),
+    0 0 20px rgba(0,255,255,.2);
+}
+
+.brand-vibe {
+  color: var(--pink);
+  text-shadow:
+    0 0 8px  rgba(255,0,170,.9),
+    0 0 24px rgba(255,0,170,.6),
+    0 0 60px rgba(255,0,170,.3);
+  animation: glow-pulse-pink 3s ease-in-out infinite alternate;
+  animation-delay: .5s;
+}
+
+/* Cyan glow pulse */
+@keyframes glow-pulse-cyan {
+  from {
+    text-shadow:
+      0 0 8px  rgba(0,255,255,.9),
+      0 0 24px rgba(0,255,255,.6),
+      0 0 60px rgba(0,255,255,.3);
+  }
+  to {
+    text-shadow:
+      0 0 14px rgba(0,255,255,1),
+      0 0 40px rgba(0,255,255,.8),
+      0 0 90px rgba(0,255,255,.5);
+  }
+}
+
+/* Pink glow pulse */
+@keyframes glow-pulse-pink {
+  from {
+    text-shadow:
+      0 0 8px  rgba(255,0,170,.9),
+      0 0 24px rgba(255,0,170,.6),
+      0 0 60px rgba(255,0,170,.3);
+  }
+  to {
+    text-shadow:
+      0 0 14px rgba(255,0,170,1),
+      0 0 40px rgba(255,0,170,.8),
+      0 0 90px rgba(255,0,170,.5);
+  }
+}
+
+/* ── Tagline ── */
+.tagline {
+  font-family: var(--font-display);
+  font-size: clamp(.75rem, 2.5vw, .95rem);
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0;
+  animation: card-enter .8s .35s cubic-bezier(.2,1,.4,1) both;
+}
+
+/* ── Divider ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  margin: 1.75rem auto;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0,255,255,.2),
+    rgba(255,0,170,.2),
+    transparent
+  );
+  animation: card-enter .8s .4s both;
+}
+
+/* ── Sub Description ── */
+.desc-section {
+  animation: card-enter .8s .45s cubic-bezier(.2,1,.4,1) both;
+}
+
+.sub-desc {
+  font-size: clamp(.85rem, 2.2vw, .98rem);
+  font-weight: 400;
+  line-height: 1.75;
+  color: rgba(240, 244, 255, .72);
+  max-width: 560px;
+  margin: 0 auto 2rem;
+}
+
+.sub-desc em {
+  font-style: normal;
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.from-bondowoso {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: .02em;
+}
+
+/* ── CTA Button Group ── */
+.cta-group {
+  display: flex;
+  flex-direction: column;  /* mobile-first: stack */
+  align-items: center;
+  gap: .85rem;
+  margin-bottom: 2rem;
+  animation: card-enter .8s .55s cubic-bezier(.2,1,.4,1) both;
+}
+
+/* ── Button Base ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  width: 100%;
+  max-width: 300px;
+  padding: .85rem 1.75rem;
+  border-radius: var(--radius-btn);
+  font-family: var(--font-body);
+  font-size: .9rem;
+  font-weight: 600;
+  letter-spacing: .03em;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    filter var(--transition);
+  /* Shine sweep on hover */
+}
+
+/* Shine pseudo-element */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,.18),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left .55s ease;
+}
+
+.btn:hover::after {
+  left: 130%;
+}
+
+.btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  filter: brightness(1.1);
+}
+
+.btn:active {
+  transform: translateY(-1px) scale(.99);
+}
+
+/* Instagram button */
+.btn--instagram {
+  background: linear-gradient(135deg, var(--cyan) 0%, #5500ff 60%, var(--pink) 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0,255,255,.25), 0 0 0 1px rgba(0,255,255,.15);
+}
+
+.btn--instagram:hover {
+  box-shadow: 0 8px 32px rgba(0,255,255,.45), 0 4px 20px rgba(255,0,170,.3);
+}
+
+/* Email / Kirim Ide button */
+.btn--email {
+  background: rgba(255,0,170,.1);
+  color: var(--pink);
+  border: 1.5px solid rgba(255,0,170,.4);
+  box-shadow: 0 0 14px rgba(255,0,170,.1);
+}
+
+.btn--email:hover {
+  background: rgba(255,0,170,.18);
+  border-color: var(--pink);
+  color: #fff;
+  box-shadow: 0 6px 28px rgba(255,0,170,.4);
+}
+
+/* Update / Newsletter button */
+.btn--update {
+  background: rgba(0,255,255,.07);
+  color: var(--cyan);
+  border: 1.5px solid rgba(0,255,255,.3);
+  box-shadow: 0 0 14px rgba(0,255,255,.08);
+}
+
+.btn--update:hover {
+  background: rgba(0,255,255,.14);
+  border-color: var(--cyan);
+  color: #fff;
+  box-shadow: 0 6px 28px rgba(0,255,255,.38);
+}
+
+/* Button icon */
+.btn-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Topic Chips ── */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .5rem;
+  animation: card-enter .8s .65s cubic-bezier(.2,1,.4,1) both;
+}
+
+.chip {
+  display: inline-block;
+  padding: .3rem .8rem;
+  border-radius: 100px;
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(0,255,255,.7);
+  border: 1px solid rgba(0,255,255,.15);
+  background: rgba(0,255,255,.04);
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.chip:hover {
+  background: rgba(0,255,255,.12);
+  border-color: rgba(0,255,255,.45);
+  color: var(--cyan);
+}
+
+/* ── Footer ── */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  padding: 1.5rem 1rem 2rem;
+  text-align: center;
+}
+
+.site-footer p {
+  font-size: .7rem;
+  font-family: 'Orbitron', monospace;
+  letter-spacing: .12em;
+  color: rgba(136, 153, 187, .4);
+  text-transform: uppercase;
+}
+
+.site-footer strong {
+  color: rgba(0,255,255,.4);
+  font-weight: 700;
+}
+
+/* ── Focus / Accessibility ── */
+.btn:focus-visible,
+.chip:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+
+/* ── Responsive: Tablet (≥600px) ── */
+@media (min-width: 600px) {
+  .glass-card {
+    padding: 3.5rem 3rem 3rem;
+  }
+
+  .cta-group {
+    flex-direction: row;  /* side by side */
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    width: auto;
+    min-width: 180px;
+  }
+}
+
+/* ── Responsive: Desktop (≥900px) ── */
+@media (min-width: 900px) {
+  .glass-card {
+    padding: 4rem 4rem 3.5rem;
+  }
+
+  .brand-name {
+    letter-spacing: .01em;
+  }
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+
+  #particle-canvas { display: none; }
+}
